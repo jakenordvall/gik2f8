@@ -15,7 +15,7 @@ app
 
     next();
   });
-app.get("/task", async (req, res) => {
+app.get("/tasks", async (req, res) => {
   try {
     const tasks = await fs.readFile("./tasks.json");
     res.send(JSON.parse(tasks));
@@ -24,7 +24,7 @@ app.get("/task", async (req, res) => {
   }
 });
 
-app.post("/task", async (req, res) => {
+app.post("/tasks", async (req, res) => {
   try {
     const task = req.body;
 
@@ -48,14 +48,14 @@ app.post("/task", async (req, res) => {
   }
 });
 
-app.delete("/task/:id", async (req, res) => {
+app.delete("/tasks/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const listBuffer = await fs.readFile("./tasks.json");
     const currentTasks = JSON.parse(listBuffer);
     if (currentTasks.length > 0) {
       await fs.writeFile(
-        "./tasks.json",
+        "./data.json",
         JSON.stringify(currentTasks.filter((task) => task.id != id))
       );
       res.send({ message: `Uppgift med id ${id} togs bort` });
