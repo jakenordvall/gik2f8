@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="shortcut icon" href="data:image/x-icon;" type="image/x-icon" />
+
     <title>Todo-applikation</title>
   </head>
   <body>
@@ -34,7 +34,7 @@
             </section>
             <section class="mb-2">
               <label class="block pr-5 mb-2 text-xl" for="description"
-                >Description</label
+                >Beskrivning</label
               >
               <p class="message text-sm text-red-700 mb-2 hidden">
                 Error message
@@ -42,14 +42,14 @@
               <textarea
                 maxlength="500"
                 rows="5"
-                name="discription"
-                id="discription"
+                name="description"
+                id="description"
                 class="resize-none w-full rounded-mb border-yellow-500 border-2 focus-within:outline-none focus: border-yellow-600 px-4 py-2"
               ></textarea>
             </section>
             <section class="mb-2">
               <label class="block pr-5 mb-2 text-xl" for="title"
-                >Utfört senast</label
+                >Slutförd senast</label
               >
               <p class="message text-sm text-red-700 mb-2 hidden">
                 Error message
@@ -76,5 +76,7 @@
         </section>
       </section>
     </main>
+    <script src="Api.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
