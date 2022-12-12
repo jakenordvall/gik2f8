@@ -1,4 +1,3 @@
-const { json } = require("express");
 const express = require("express");
 const app = express();
 const fs = require("fs/promises");
@@ -10,11 +9,12 @@ app
   .use(express.urlencoded({ extended: false }))
   .use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Header", "*");
-    res.header("Access-Control-Allow-Method", "*");
+    res.header("Access-Control-Allow-Headers", "*");
+    res.header("Access-Control-Allow-Methods", "*");
 
     next();
   });
+
 app.get("/tasks", async (req, res) => {
   try {
     const tasks = await fs.readFile("./tasks.json");
@@ -30,15 +30,15 @@ app.post("/tasks", async (req, res) => {
 
     const listBuffer = await fs.readFile("./tasks.json");
     const currentTasks = JSON.parse(listBuffer);
-    let maxTaskID = 1;
+    let maxTaskId = 1;
     if (currentTasks && currentTasks.length > 0) {
-      maxTaskID = currentTasks.reduce(
-        (maxID, currentElement) =>
-          currentElement.id > maxID ? currentElement.id : maxID,
-        maxTaskID
+      maxTaskId = currentTasks.reduce(
+        (maxId, currentElement) =>
+          currentElement.id > maxId ? currentElement.id : maxId,
+        maxTaskId
       );
     }
-    const newTask = { id: maxTaskID + 1, ...task };
+    const newTask = { id: maxTaskId + 1, ...task };
     const newList = currentTasks ? [...currentTasks, newTask] : [newTask];
 
     await fs.writeFile("./tasks.json", JSON.stringify(newList));
@@ -49,13 +49,14 @@ app.post("/tasks", async (req, res) => {
 });
 
 app.delete("/tasks/:id", async (req, res) => {
+  console.log(req);
   try {
     const id = req.params.id;
     const listBuffer = await fs.readFile("./tasks.json");
     const currentTasks = JSON.parse(listBuffer);
     if (currentTasks.length > 0) {
       await fs.writeFile(
-        "./data.json",
+        "./tasks.json",
         JSON.stringify(currentTasks.filter((task) => task.id != id))
       );
       res.send({ message: `Uppgift med id ${id} togs bort` });
@@ -66,4 +67,31 @@ app.delete("/tasks/:id", async (req, res) => {
     res.status(500).send({ error: error.stack });
   }
 });
+
+app.patch("/tasks/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedTask = req.body;
+
+    const listBuffer = await fs.readFile("./tasks.json");
+    const currentTasks = JSON.parse(listBuffer);
+    if (currentTasks.length > 0) {
+      const updatedList = currentTasks.map((task) => {
+        if (task.id == id) {
+          return { ...task, ...updatedTask };
+        } else {
+          return task;
+        }
+      });
+
+      await fs.writeFile("./tasks.json", JSON.stringify(updatedList));
+      res.send({ message: `Uppgift med id ${id} uppdaterad` });
+    } else {
+      res.status(404).send({ error: "Ingen uppgift att uppdatera" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.stack });
+  }
+});
+
 app.listen(PORT, () => console.log("Server running on http://localhost:5000"));
